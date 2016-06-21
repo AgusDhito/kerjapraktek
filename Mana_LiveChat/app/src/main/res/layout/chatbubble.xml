@@ -19,5 +19,4 @@
             android:text="Hi! new message"
             android:textColor="@android:color/primary_text_light" />
     </LinearLayout>
-
 </LinearLayout>
