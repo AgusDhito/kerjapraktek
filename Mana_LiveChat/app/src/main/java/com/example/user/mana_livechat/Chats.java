@@ -8,6 +8,7 @@ import java.util.Random;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.user.mana_livechat.ChatAdapter;
 import com.example.user.mana_livechat.ChatMessage;
@@ -29,12 +31,18 @@ public class Chats extends Fragment implements OnClickListener {
     public static ArrayList<ChatMessage> chatlist;
     public static ChatAdapter chatAdapter;
     ListView msgListView;
+    private TextView statstext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat_layout, container, false);
+        Log.d("debug", "masuk kelas chats");
+
         random = new Random();
+//        statstext = (TextView) view.findViewById(R.id.statsText);
+//        statstext.setText("Ini text status");
+
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(
                 "Chats");
         msg_edittext = (EditText) view.findViewById(R.id.messageEditText);
@@ -77,8 +85,6 @@ public class Chats extends Fragment implements OnClickListener {
         switch (v.getId()) {
             case R.id.sendMessageButton:
                 sendTextMessage(v);
-
         }
     }
-
 }

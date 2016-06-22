@@ -1,19 +1,21 @@
+<?xml version = "1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#e1e1e1"
+    android:background="#ffcccc"
     android:orientation="vertical" >
 
     <ListView
         android:id="@+id/msgListView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/form"
         android:divider="@null"
+        android:layout_above="@+id/form"
         android:dividerHeight="0dp"
-        android:paddingBottom="10dp"
-        android:text="@string/hello_world" />
+        android:text="@string/hello_world"
+        android:background="#ccffcc" />
+
 
     <LinearLayout
         android:id="@+id/form"
@@ -21,9 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="#91f1f1f1"
         android:orientation="horizontal"
-        android:paddingBottom="2dp" >
+        android:paddingBottom="55dp"
+        android:background="#cceeff" >
 
 
         <EditText
