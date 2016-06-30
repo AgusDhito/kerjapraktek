@@ -21,28 +21,28 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            <!--android:background="@color/input_register_bg"-->
-            <!--android:hint="@string/hint_email"-->
             android:inputType="textEmailAddress"
             android:padding="10dp"
             android:singleLine="true"
-            <!--android:textColor="@color/input_login"-->
-            <!--android:textColorHint="@color/input_login_hint" -->
             />
+        <!--android:background="@color/input_register_bg"-->
+        <!--android:hint="@string/hint_email"-->
+        <!--android:textColor="@color/input_login"-->
+        <!--android:textColorHint="@color/input_login_hint" -->
 
         <EditText
             android:id="@+id/password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            <!--android:background="@color/input_register_bg"-->
-            <!--android:hint="@string/hint_password"-->
             android:inputType="textPassword"
             android:padding="10dp"
             android:singleLine="true"
-            <!--android:textColor="@color/input_login"-->
-            <!--android:textColorHint="@color/input_login_hint" -->
             />
+        <!--android:background="@color/input_register_bg"-->
+        <!--android:hint="@string/hint_password"-->
+        <!--android:textColor="@color/input_login"-->
+        <!--android:textColorHint="@color/input_login_hint" -->
 
         <!-- Login Button -->
 
@@ -52,9 +52,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dip"
             android:background="#212121"
-            <!--android:text="@string/btn_login"-->
-            <!--android:textColor="@color/white" -->
             />
+        <!--android:text="@string/btn_login"-->
+        <!--android:textColor="@color/white" -->
 
         <!-- Link to Login Screen -->
 
@@ -64,10 +64,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
             android:background="#b2b2b2"
-            android:text="@string/btn_link_to_register"
             android:textAllCaps="false"
-            <!--android:textColor="@color/white"-->
             android:textSize="15dp" />
     </LinearLayout>
+    <!--android:text="@string/btn_link_to_register"-->
+    <!--android:textColor="@color/white"-->
 
 </LinearLayout>
