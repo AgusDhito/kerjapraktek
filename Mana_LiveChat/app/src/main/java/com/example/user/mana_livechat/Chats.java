@@ -54,7 +54,12 @@ public class Chats extends Fragment implements OnClickListener {
     private TextView statstext;
     private String jsonResponse;
     //Link untuk menerima json array
-    private String urlJsonObj = "http://202.56.170.37/mobile-agro/read_post.php";
+    private String urlObj = "http://202.56.170.37/mobile-agro/chat.php";
+    /**
+     * BUAT NGETEST PAKE DATA INI YA.
+     */
+    private String my_username = "dhito";
+    private String dest_username = "runi";
     private String urlJsonArry = "http://202.56.170.37/mobile-agro/test.php";
     // Progress dialog
     private ProgressDialog pDialog;
@@ -99,7 +104,8 @@ public class Chats extends Fragment implements OnClickListener {
     public void sendTextMessage(View v) {
         String message = msg_edittext.getEditableText().toString();
         if (!message.equalsIgnoreCase("")) {
-            makeMessage(message);
+            sendObject(message);
+            //makeMessage(message);
         }
     }
 
@@ -123,90 +129,47 @@ public class Chats extends Fragment implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sendMessageButton:
-                //sendTextMessage(v);
+                sendTextMessage(v);
                 //makeJsonArrayRequest();
-                sendJsonObject();
+//                sendObject();
         }
     }
 
-    private void sendJsonObject() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlJsonObj,
+    private void sendObject(String message) {
+        showpDialog();
+        final String themessage = message;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlObj,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        hidepDialog();
                         Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
+                        makeMessage(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getActivity(),error.toString(),Toast.LENGTH_LONG).show();
+                        hidepDialog();
                     }
                 }){
             @Override
             protected Map<String,String> getParams(){
                 Map<String,String> params = new HashMap<String, String>();
-                params.put("u_pengguna","Hari");
-                params.put("u_narasumber","Saputra");
+                params.put("u_sender",my_username);//dhito
+                params.put("u_receiver",dest_username);//runi
+                params.put("message", themessage);
                 return params;
             }
         };
         AppController.getInstance().addToRequestQueue(stringRequest);
-//        final JSONObject json = new JSONObject();
-//        try {
-//            json.put("u_narasumber", "Saputra");
-//            json.put("u_pengguna", "Hari");
-//            makeMessage(json.toString());
-//        }
-//        catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.d("debug", "masuk error JsonObject");
-//        }
-//
-//        JsonObjectRequest jsonObjSend = new JsonObjectRequest(Method.POST,
-//                urlJsonObj, json,
-//                new Response.Listener<JSONObject>() {
-//
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                Toast.makeText(getActivity().getApplicationContext(),
-//                        "Udah masuk onResponse()", Toast.LENGTH_SHORT).show();
-//                try {
-//                    String pengguna = response.getString("u_pengguna");
-//                    String narasumber = response.getString("u_narasumber");
-//                    jsonResponse = "";
-//                    jsonResponse += "Pengguna: " + pengguna + "\n\n";
-//                    jsonResponse += "Narasumber : " + narasumber + "\n\n";
-//                    makeMessage(jsonResponse);
-//                }
-//                catch (JSONException e) {
-//                    e.printStackTrace();
-//                    Toast.makeText(((MainActivity) getActivity()).getApplicationContext(),
-//                            "Error: " + e.getMessage(),
-//                            Toast.LENGTH_LONG).show();
-//                }
-//
-//
-//            }
-//        }, new Response.ErrorListener() {
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Toast.makeText(getActivity().getApplicationContext(),
-//                        error.getMessage(), Toast.LENGTH_SHORT).show();
-//                Log.d("debug", "masuk error JsonObjectRequest");
-//                makeMessage(error.getMessage());
-//            }
-//        });
-//
-//        // Adding request to request queue
-//        AppController.getInstance().addToRequestQueue(jsonObjSend);
     }
 
     private void makeJsonObjectRequest() {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET,
-                urlJsonObj, null, new Response.Listener<JSONObject>() {
+                urlObj, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
