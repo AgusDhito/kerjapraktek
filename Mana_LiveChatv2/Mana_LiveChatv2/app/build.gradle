@@ -30,4 +30,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-identity:8.3.0'
     compile 'com.mcxiaoke.volley:library-aar:1.0.0'
     compile 'com.android.support:recyclerview-v7:24.0.0-alpha2'
+    compile 'com.android.support:multidex:1.0.0'
 }

@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
          * redirect him to main activity
          * */
         if (MyApplication.getInstance().getPrefManager().getUser() != null) {
-            startActivity(new Intent(this, TabbedActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         }
 
