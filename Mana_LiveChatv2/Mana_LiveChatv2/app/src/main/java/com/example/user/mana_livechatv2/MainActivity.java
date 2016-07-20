@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -64,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -121,6 +122,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }));
+
+        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+        fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, Pencarian_Narasumber.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         /**
          * Always check for google play services availability before
@@ -193,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     if (obj.getBoolean("error") == false) {
                         JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
                         for (int i = 0; i < chatRoomsArray.length(); i++) {
+                            Log.d("debug", Integer.toString(chatRoomsArray.length()));
                             JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
                             ChatRoom cr = new ChatRoom();
                             cr.setId(chatRoomsObj.getString("chat_room_id"));
@@ -309,20 +324,21 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//    public boolean onOptionsItemSelected(MenuItem menuItem) {
-//        switch (menuItem.getItemId()) {
-//            case R.id.action_logout:
-//                MyApplication.getInstance().logout();
-//                break;
-//        }
-//        return super.onOptionsItemSelected(menuItem);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.action_logout:
+                MyApplication.getInstance().logout();
+                break;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
 }
