@@ -4,6 +4,8 @@
     package="com.example.user.mana_livechatv2">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!--
      needed for older devices -
@@ -80,9 +82,17 @@
         <activity
             android:name=".ChatRoomActivity"
             android:label="@string/title_activity_chat_room"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".TestActivity" />
         <activity android:name=".TabbedActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".Pencarian_Narasumber"
+            android:label="@string/title_activity_pencarian__narasumber"></activity>
     </application>
 
 </manifest> <!-- <manifest xmlns:android="http://schemas.android.com/apk/res/android"> --><!-- <application> --><!-- <activity android:name="com.example.user.mana_livechatv2.ChatRoomActivity" android:label="@string/title_activity_chat_room" --><!-- android:theme="@style/AppTheme.NoActionBar"></activity> --><!-- </application> --><!-- </manifest> -->
