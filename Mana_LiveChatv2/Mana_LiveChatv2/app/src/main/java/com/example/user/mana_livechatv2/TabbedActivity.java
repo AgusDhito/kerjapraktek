@@ -35,7 +35,7 @@ public class TabbedActivity extends TabActivity {
         // Tab for Songs
         TabHost.TabSpec songspec = tabHost.newTabSpec("Search");
         songspec.setIndicator("Search", getResources().getDrawable(R.drawable.bg_bubble_gray));
-        Intent mapIntent = new Intent(this, TestActivity.class);
+        Intent mapIntent = new Intent(this, Pencarian_Narasumber.class);
         songspec.setContent(mapIntent);
 
         // Tab for Videos

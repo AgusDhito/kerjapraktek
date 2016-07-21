@@ -60,6 +60,7 @@ public class GcmIntentService extends IntentService {
             case SUBSCRIBE:
                 // subscribe to a topic
                 String topic = intent.getStringExtra(TOPIC);
+                Log.d("debug_topic", topic);
                 subscribeToTopic(topic);
                 break;
             case UNSUBSCRIBE:
@@ -79,7 +80,7 @@ public class GcmIntentService extends IntentService {
     private void registerGCM() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String token = null;
-
+        Log.d("debug_update_gcm", "UPDATE GCM");
         try {
             InstanceID instanceID = InstanceID.getInstance(this);
             token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
@@ -111,7 +112,7 @@ public class GcmIntentService extends IntentService {
             return;
         }
 
-        String endPoint = EndPoints.USER.replace("_ID_", user.getId());
+        String endPoint = EndPoints.UPDATE_GCM.replace("_ID_", user.getId());
 
         Log.e(TAG, "endpoint: " + endPoint);
 
