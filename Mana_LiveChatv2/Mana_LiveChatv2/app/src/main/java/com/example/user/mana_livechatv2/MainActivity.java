@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, Pencarian_Narasumber.class);
 //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                finish();
+                //finish();
             }
         });
 
@@ -167,8 +167,6 @@ public class MainActivity extends AppCompatActivity {
             Message message = (Message) intent.getSerializableExtra("message");
             Toast.makeText(getApplicationContext(), "New push: " + message.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     /**
@@ -193,8 +191,12 @@ public class MainActivity extends AppCompatActivity {
      * fetching the chat rooms by making http call
      */
     private void fetchChatRooms() {
+        String username = MyApplication.getInstance().getPrefManager().getUser().getName();
+        String endPoint = EndPoints.CHAT_ROOM_SPECIFIC.replace("_ID_", username);
+        Log.d("debug_fetch", endPoint);
+
         StringRequest strReq = new StringRequest(Request.Method.GET,
-                EndPoints.CHAT_ROOMS, new Response.Listener<String>() {
+                endPoint, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -269,6 +271,14 @@ public class MainActivity extends AppCompatActivity {
             startService(intent);
         }
     }
+
+//    private void subscribeToSpecificTopics() {
+//        for (ChatRoom cr : chatRoomArrayList) {
+//            if () {
+//
+//            }
+//        }
+//    }
 
     private void launchLoginActivity() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
