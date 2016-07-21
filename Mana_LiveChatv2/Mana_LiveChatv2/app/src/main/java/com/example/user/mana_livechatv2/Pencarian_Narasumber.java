@@ -15,6 +15,7 @@ import android.support.multidex.MultiDex;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -68,7 +69,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class Pencarian_Narasumber extends FragmentActivity implements OnMapReadyCallback, OnItemSelectedListener, GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener, GoogleApiClient.OnConnectionFailedListener {
+public class Pencarian_Narasumber extends AppCompatActivity implements OnMapReadyCallback, OnItemSelectedListener, GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener, GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     public static final String TAGS = Pencarian_Narasumber.class.getSimpleName();
