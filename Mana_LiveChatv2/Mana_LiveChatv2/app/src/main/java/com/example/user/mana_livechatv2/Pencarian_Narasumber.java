@@ -1,6 +1,7 @@
 package com.example.user.mana_livechatv2;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -36,10 +37,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.example.user.mana_livechatv2.app.EndPoints;
 import com.example.user.mana_livechatv2.app.MyApplication;
+import com.example.user.mana_livechatv2.model.ChatRoom;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -94,7 +100,7 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
     ArrayList<String> address = new ArrayList<String>();
     TextView tv1;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-
+    String Namachat;
     HashMap<String, String[]> abc = new HashMap<String, String[]>();
     private static String TAG = "kampret";
     Location lokasi;
@@ -365,7 +371,7 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
             String app3 = apa[4];
             String app4 = apa[5];
             String jabat = apa[1];
-
+            Namachat = m.getTitle();
             ((TextView) pwindo.getContentView().findViewById(R.id.txtView)).append(m.getTitle());
             ((TextView) pwindo.getContentView().findViewById(R.id.txtView2)).append(jabat);
             ((TextView) pwindo.getContentView().findViewById(R.id.txtView3)).append(app);
@@ -376,18 +382,82 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
             pwindo.showAtLocation(layout, Gravity.CENTER, 0, 0);
 
             chatting = (Button) layout.findViewById(R.id.buttonchat);
+
+            //Memulai chat
             chatting.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     // Intent i = new Intent(this, "apaaan".class);
                     //startActivity(i);
+
+//                    ChatRoom chatRoom = chatRoomArrayList.get(position);
+//                    Intent intent = new Intent(MainActivity.this, ChatRoomActivity.class);
+//                    intent.putExtra("chat_room_id", chatRoom.getId());
+//                    intent.putExtra("name", chatRoom.getName());
+//                    startActivity(intent);
+                    makeChatRoom(Namachat);
+
                 }
-            });
+            });;
             btnClosePopup = (Button) layout.findViewById(R.id.btn_close_popup);
             btnClosePopup.setOnClickListener(cancel_button_click_listener);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void makeChatRoom(String narasumber) {
+        String endPoint = EndPoints.CHAT_ROOM_MAKE.replace("_ID_", narasumber);
+        Log.d("debug_make_room", endPoint);
+        Log.d("debug_make_room", narasumber);
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                endPoint, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "response: " + response);
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    // check for error flag
+                    if (obj.getBoolean("error") == false) {
+                        JSONArray chatRoomsArray = obj.getJSONArray("chat_room");
+                        JSONObject room = (JSONObject) chatRoomsArray.get(0);
+                        ChatRoom cr = new ChatRoom();
+                        cr.setId(room.getString("chat_room_id"));
+                        cr.setName(room.getString("name"));
+                        cr.setLastMessage("");
+                        cr.setUnreadCount(0);
+                        cr.setTimestamp(room.getString("created_at"));
+
+                        Intent intent = new Intent(Pencarian_Narasumber.this, ChatRoomActivity.class);
+                        intent.putExtra("chat_room_id", cr.getId());
+                        intent.putExtra("name", cr.getName());
+                        startActivity(intent);
+                    } else {
+                        // error in fetching chat rooms
+                        Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
+                        Log.d("debug",  "" + obj.getJSONObject("error").getString("message"));
+                    }
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "json parsing error: " + e.getMessage());
+                    Toast.makeText(getApplicationContext(), "Json parse error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                NetworkResponse networkResponse = error.networkResponse;
+                Log.e(TAG, "Volley error: " + error.getMessage() + ", code: " + networkResponse);
+                Toast.makeText(getApplicationContext(), "Volley error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Adding request to request queue
+        MyApplication.getInstance().addToRequestQueue(strReq);
     }
 
     private OnClickListener cancel_button_click_listener = new OnClickListener() {

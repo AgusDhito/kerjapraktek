@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -131,10 +132,12 @@ public class MainActivity extends AppCompatActivity {
 //                        .setAction("Action", null).show();
 //                Intent intent = new Intent(MainActivity.this, Pencarian_Narasumber.class);
 //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//
 //                startActivity(intent);
-//                finish();
+//                //finish();
 //            }
 //        });
+
 
         /**
          * Always check for google play services availability before
@@ -167,8 +170,6 @@ public class MainActivity extends AppCompatActivity {
             Message message = (Message) intent.getSerializableExtra("message");
             Toast.makeText(getApplicationContext(), "New push: " + message.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     /**
@@ -193,8 +194,12 @@ public class MainActivity extends AppCompatActivity {
      * fetching the chat rooms by making http call
      */
     private void fetchChatRooms() {
+        String username = MyApplication.getInstance().getPrefManager().getUser().getName();
+        String endPoint = EndPoints.CHAT_ROOM_SPECIFIC.replace("_ID_", username);
+        Log.d("debug_fetch", endPoint);
+
         StringRequest strReq = new StringRequest(Request.Method.GET,
-                EndPoints.CHAT_ROOMS, new Response.Listener<String>() {
+                endPoint, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -269,6 +274,14 @@ public class MainActivity extends AppCompatActivity {
             startService(intent);
         }
     }
+
+//    private void subscribeToSpecificTopics() {
+//        for (ChatRoom cr : chatRoomArrayList) {
+//            if () {
+//
+//            }
+//        }
+//    }
 
     private void launchLoginActivity() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);

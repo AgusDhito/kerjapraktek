@@ -164,10 +164,16 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(new Intent(getApplicationContext(), TabbedActivity.class));
                             finish();
 
+
                         } else {
                             // login error - simply toast the message
                             Toast.makeText(getApplicationContext(), "" + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
                         }
+
+                        // start main activity
+                        startActivity(new Intent(getApplicationContext(), TabbedActivity.class));
+                        finish();
+
 
                     } catch (JSONException e) {
                         Log.e(TAG, "json parsing error: " + e.getMessage());
