@@ -33,7 +33,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="Login"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,13 +43,9 @@
         <!-- <activity android:name="com.example.user.mana_livechatv2.ChatRoomActivity" android:label="@string/title_activity_chat_room" -->
         <!-- android:theme="@style/AppTheme.NoActionBar"></activity> -->
         <activity
-            android:name=".MainActivity"
-            android:label="Chat Rooms"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".RegisterActivity"
             android:label="Register"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
 
         <!-- START Added for GCM -->
         <receiver
@@ -88,15 +84,21 @@
             android:label="Chat"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".TestActivity" />
-        <activity android:name=".TabbedActivity" />
-
+        <activity
+            android:name=".TabbedActivity"
+            android:label="Tab"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".MainActivity"
+            android:label="Chat Rooms"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".Pencarian_Narasumber"
+            android:label="Peta Narasumber"
+            android:theme="@style/AppTheme" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
-        <activity
-            android:name=".Pencarian_Narasumber"
-            android:label="Peta Narasumber"></activity>
     </application>
 
 </manifest> <!-- <manifest xmlns:android="http://schemas.android.com/apk/res/android"> --><!-- <application> --><!-- <activity android:name="com.example.user.mana_livechatv2.ChatRoomActivity" android:label="@string/title_activity_chat_room" --><!-- android:theme="@style/AppTheme.NoActionBar"></activity> --><!-- </application> --><!-- </manifest> -->
