@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -123,18 +124,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }));
 
-        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab1);
-        fab1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+//        FloatingActionButton fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+//        fab1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-                Intent intent = new Intent(MainActivity.this, Pencarian_Narasumber.class);
+//                Intent intent = new Intent(MainActivity.this, Pencarian_Narasumber.class);
 //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                //finish();
-            }
-        });
+//
+//                startActivity(intent);
+//                //finish();
+//            }
+//        });
+
 
         /**
          * Always check for google play services availability before

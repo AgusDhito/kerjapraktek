@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#1f4720</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#999999</color>
+    <color name="bg_chat">#ffffff</color>
+    <color name="input_text">#222222</color>
+    <color name="input_text_hint">#999999</color>
+    <color name="btn_text">#ffffff</color>
+    <color name="btn_bg">#2d662f</color>
+    <color name="lbl_name">#ffffff</color>
+
     <color name="list_divider">#dedede</color>
     <color name="bg_bubble_self">#E1E1E1</color>
 </resources>
