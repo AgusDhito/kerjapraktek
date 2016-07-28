@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -24,6 +25,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.user.mana_livechatv2.helper.Db_ChatRoom;
+import com.example.user.mana_livechatv2.model.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -52,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ChatRoom> chatRoomArrayList;
     private ChatRoomsAdapter mAdapter;
     private RecyclerView recyclerView;
+    android.os.Handler handler = new android.os.Handler();
+
+    //Database untuk menyimpan data-data chat room
+    private Db_ChatRoom db_chatRoom = new Db_ChatRoom(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         if (MyApplication.getInstance().getPrefManager().getUser() == null) {
             launchLoginActivity();
         }
-
+        doTheAutoRefresh();
         setContentView(R.layout.activity_main);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -98,20 +105,15 @@ public class MainActivity extends AppCompatActivity {
         };
 
         chatRoomArrayList = new ArrayList<>();
-        mAdapter = new ChatRoomsAdapter(this, chatRoomArrayList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(
-                getApplicationContext()
-        ));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
 
         recyclerView.addOnItemTouchListener(new ChatRoomsAdapter.RecyclerTouchListener(getApplicationContext(), recyclerView, new ChatRoomsAdapter.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 // when chat is clicked, launch full chat thread activity
                 ChatRoom chatRoom = chatRoomArrayList.get(position);
+                chatRoom.setLastMessage("");
+                chatRoom.setUnreadCount(0);
+                db_chatRoom.updateChatRoom(Integer.toString(chatRoom.getUnreadCount()), chatRoom.getLastMessage(), chatRoom.getId());
                 Intent intent = new Intent(MainActivity.this, ChatRoomActivity.class);
                 intent.putExtra("chat_room_id", chatRoom.getId());
                 intent.putExtra("name", chatRoom.getName());
@@ -154,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void handlePushNotification(Intent intent) {
         int type = intent.getIntExtra("type", -1);
-
+        Log.d("debug_push", "handlePushNotification();->Main Activity");
         // if the push is of chat room message
         // simply update the UI unread messages count
         if (type == Config.PUSH_TYPE_CHATROOM) {
@@ -164,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
             if (message != null && chatRoomId != null) {
                 updateRow(chatRoomId, message);
             }
+
         } else if (type == Config.PUSH_TYPE_USER) {
             // push belongs to user alone
             // just showing the message in a toast
@@ -181,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 int index = chatRoomArrayList.indexOf(cr);
                 cr.setLastMessage(message.getMessage());
                 cr.setUnreadCount(cr.getUnreadCount() + 1);
+                db_chatRoom.updateChatRoom(Integer.toString(cr.getUnreadCount()), cr.getLastMessage(), chatRoomId);
                 chatRoomArrayList.remove(index);
                 chatRoomArrayList.add(index, cr);
                 break;
@@ -196,7 +200,19 @@ public class MainActivity extends AppCompatActivity {
     private void fetchChatRooms() {
         String username = MyApplication.getInstance().getPrefManager().getUser().getName();
         String endPoint = EndPoints.CHAT_ROOM_SPECIFIC.replace("_ID_", username);
-        Log.d("debug_fetch", endPoint);
+
+        //
+        //chatRoomArrayList = getData(MyApplication.getInstance().getPrefManager().getChatRoomSet().toArray(String[]);
+        mAdapter = new ChatRoomsAdapter(this, chatRoomArrayList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(
+                getApplicationContext()
+        ));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+
+        //Log.d("debug_fetch", endPoint);
 
         StringRequest strReq = new StringRequest(Request.Method.GET,
                 endPoint, new Response.Listener<String>() {
@@ -212,17 +228,30 @@ public class MainActivity extends AppCompatActivity {
                     if (obj.getBoolean("error") == false) {
                         JSONArray chatRoomsArray = obj.getJSONArray("chat_rooms");
                         for (int i = 0; i < chatRoomsArray.length(); i++) {
-                            Log.d("debug", Integer.toString(chatRoomsArray.length()));
+                            //Log.d("debug", Integer.toString(chatRoomsArray.length()));
                             JSONObject chatRoomsObj = (JSONObject) chatRoomsArray.get(i);
                             ChatRoom cr = new ChatRoom();
                             cr.setId(chatRoomsObj.getString("chat_room_id"));
-                            cr.setName(chatRoomsObj.getString("name"));
+                            cr.setName(set(chatRoomsObj.getString("name")));
                             cr.setLastMessage("");
                             cr.setUnreadCount(0);
                             cr.setTimestamp(chatRoomsObj.getString("created_at"));
+                            //Insert chat room
+                            db_chatRoom.insertChatRoom(cr);
 
-                            chatRoomArrayList.add(cr);
+//                            MyApplication.getInstance().getPrefManager().storeChatRoom(cr);
                         }
+
+                        chatRoomArrayList = db_chatRoom.getAllChatRooms();
+//                        ArrayList<ChatRoom> test = db_chatRoom.getAllChatRooms();
+//                        Log.d("debug_sqLite", "masuk sini");
+//                        for (int a = 0; a < test.size(); a++) {
+//                            Log.d("debug_sqLite", test.get(a).getId());
+//                            Log.d("debug_sqLite", test.get(a).getName());
+//                            Log.d("debug_sqLite", Integer.toString(test.get(a).getUnreadCount()));
+//                            Log.d("debug_sqLite", test.get(a).getLastMessage());
+//
+//                        }
 
                     } else {
                         // error in fetching chat rooms
@@ -254,8 +283,26 @@ public class MainActivity extends AppCompatActivity {
         MyApplication.getInstance().addToRequestQueue(strReq);
     }
 
+//    private ArrayList<ChatRoom> toChatRoomType(ArrayList<String> arr) {
+//
+//    }
+    //membuat nama chat room
+    private String set (String str) {
+        User user = MyApplication.getInstance().getPrefManager().getUser();
+        String[] names = str.split("/");
+//        Log.d("debug_name", names[0]);
+//        Log.d("debug_name", names[1]);
+
+        if (names[0].equals(user.getName())) {
+            return names[1];
+        }
+        else {
+            return names[0];
+        }
+    }
     // subscribing to global topic
     private void subscribeToGlobalTopic() {
+//        Log.d("debug_topic", "subscribe->global()");
         Intent intent = new Intent(this, GcmIntentService.class);
         intent.putExtra(GcmIntentService.KEY, GcmIntentService.SUBSCRIBE);
         intent.putExtra(GcmIntentService.TOPIC, Config.TOPIC_GLOBAL);
@@ -266,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
     // each topic name starts with `topic_` followed by the ID of the chat room
     // Ex: topic_1, topic_2
     private void subscribeToAllTopics() {
+        //Log.d("debug_topic", "subscribe->specific()");
         for (ChatRoom cr : chatRoomArrayList) {
 
             Intent intent = new Intent(this, GcmIntentService.class);
@@ -309,12 +357,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
     }
 
     // starting the service to register with GCM
     private void registerGCM() {
+        Log.d("debug_register", "registerGCM()");
         Intent intent = new Intent(this, GcmIntentService.class);
         intent.putExtra("key", "register");
         startService(intent);
@@ -348,10 +397,29 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.action_logout:
+                db_chatRoom.drop();
                 MyApplication.getInstance().logout();
+                handler= null;
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
     }
 
+    private void doTheAutoRefresh() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // this is where you put your refresh code
+//                Toast.makeText(getApplicationContext(),
+//                        "refresh", Toast.LENGTH_SHORT).show();
+//                chatRoomArrayList = new ArrayList<>();
+
+//                mAdapter = new ChatRoomsAdapter(getApplicationContext(), chatRoomArrayList);
+//                recyclerView.setAdapter(mAdapter);
+                fetchChatRooms();
+//                subscribeToAllTopics();
+                doTheAutoRefresh();
+            }
+        }, 3000);
+    }
 }

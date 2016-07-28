@@ -21,9 +21,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -48,6 +45,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.user.mana_livechatv2.app.EndPoints;
 import com.example.user.mana_livechatv2.app.MyApplication;
+import com.example.user.mana_livechatv2.gcm.GcmIntentService;
 import com.example.user.mana_livechatv2.model.ChatRoom;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -76,6 +74,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Pencarian_Narasumber extends AppCompatActivity implements OnMapReadyCallback, OnItemSelectedListener, GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener, GoogleApiClient.OnConnectionFailedListener {
@@ -308,9 +307,10 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
                                 String komoditas = narasumber.getString("komoditas");
                                 String role = narasumber.getString("role");
                                 String alamat = narasumber.getString("alamat");
+                                String token = narasumber.getString("gcm_registration_id");
 
 
-                                String[] kampret = new String[7];
+                                String[] kampret = new String[8];
 
 
                                 kampret[0] = name;
@@ -320,7 +320,7 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
                                 kampret[4] = komoditas;
                                 kampret[5] = role;
                                 kampret[6] = alamat;
-
+                                kampret[7] = token;
                                 abc.put(name, kampret);
                                 nama.add(name);
                                 jabatans.add(role);
@@ -374,6 +374,7 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
             String app3 = apa[4];
             String app4 = apa[5];
             String jabat = apa[1];
+            final String asu = apa[7];
             Namachat = m.getTitle();
             ((TextView) pwindo.getContentView().findViewById(R.id.txtView)).append(m.getTitle());
             ((TextView) pwindo.getContentView().findViewById(R.id.txtView2)).append(jabat);
@@ -397,7 +398,8 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
 //                    intent.putExtra("chat_room_id", chatRoom.getId());
 //                    intent.putExtra("name", chatRoom.getName());
 //                    startActivity(intent);
-                    makeChatRoom(Namachat);
+
+                    makeChatRoom(Namachat, asu);
 
                 }
             });;
@@ -409,16 +411,16 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
         }
     }
 
-    private void makeChatRoom(String narasumber) {
-        String endPoint = EndPoints.CHAT_ROOM_MAKE.replace("_ID_", narasumber);
-        Log.d("debug_make_room", endPoint);
-        Log.d("debug_make_room", narasumber);
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                endPoint, new Response.Listener<String>() {
+    private void makeChatRoom(final String narasumber, final String token) {
+        //String endPoint = EndPoints.CHAT_ROOM_MAKE.replace("_ID_", narasumber);
+        //Log.d("debug_make_room", endPoint);
+        //Log.d("debug_make_room", narasumber);
+        final StringRequest strReq = new StringRequest(Request.Method.POST,
+                EndPoints.CHAT_ROOM_MAKE, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-                Log.e(TAG, "response: " + response);
+                Log.e(TAG, "response_makeChatRoom(): " + response);
 
                 try {
                     JSONObject obj = new JSONObject(response);
@@ -433,6 +435,14 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
                         cr.setLastMessage("");
                         cr.setUnreadCount(0);
                         cr.setTimestamp(room.getString("created_at"));
+
+                        //Subscription first time attempt
+                        Intent subscribe_new = new Intent(getApplicationContext(), GcmIntentService.class);
+                        subscribe_new.putExtra(GcmIntentService.KEY, GcmIntentService.SUBSCRIBE_USER_ADDED_TOPIC);
+                        subscribe_new.putExtra(GcmIntentService.TOPIC, "topic_" + cr.getId());
+                        subscribe_new.putExtra(GcmIntentService.NARASUMBER, token);
+                        Log.d("debug_token_pencarian", token);
+                        startService(subscribe_new);
 
                         Intent intent = new Intent(Pencarian_Narasumber.this, ChatRoomActivity.class);
                         intent.putExtra("chat_room_id", cr.getId());
@@ -457,7 +467,22 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
                 Log.e(TAG, "Volley error: " + error.getMessage() + ", code: " + networkResponse);
                 Toast.makeText(getApplicationContext(), "Volley error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("narasumber_name", narasumber);
+                params.put("user_name", MyApplication.getInstance().getPrefManager().getUser().getName());
+
+                Log.e(TAG, "Params: " + params.toString());
+
+                return params;
+            }
+
+            ;
+        };
+        //);
 
         //Adding request to request queue
         MyApplication.getInstance().addToRequestQueue(strReq);
@@ -764,21 +789,6 @@ public class Pencarian_Narasumber extends AppCompatActivity implements OnMapRead
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_logout:
-                MyApplication.getInstance().logout();
-                break;
-        }
-        return super.onOptionsItemSelected(menuItem);
-    }
 
 }

@@ -47,8 +47,8 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 //        inputLayoutName = (TextInputLayout) findViewById(R.id.input_layout_name);
 //        inputLayoutEmail = (TextInputLayout) findViewById(R.id.input_layout_email);
 //        inputLayoutPassword = (TextInputLayout) findViewById(R.id.input_layout_password);
