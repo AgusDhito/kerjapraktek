@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.user.mana_livechatv2.helper.Db_ChatRoom;
 import com.google.android.gms.gcm.GcmListenerService;
 
 import org.json.JSONException;
@@ -32,6 +33,8 @@ public class MyGcmPushReceiver extends GcmListenerService {
     private static final String TAG = MyGcmPushReceiver.class.getSimpleName();
 
     private NotificationUtils notificationUtils;
+
+    private Db_ChatRoom db_chatRoom = new Db_ChatRoom(this);
 
     /**
      * Called when message is received.
@@ -145,6 +148,12 @@ public class MyGcmPushReceiver extends GcmListenerService {
                     NotificationUtils notificationUtils = new NotificationUtils();
                     notificationUtils.playNotificationSound();
                 } else {
+
+                    Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
+                    pushNotification.putExtra("type", Config.PUSH_TYPE_CHATROOM);
+                    pushNotification.putExtra("message", message);
+                    pushNotification.putExtra("chat_room_id", chatRoomId);
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
 
                     // app is in background. show the message in notification try
                     Intent resultIntent = new Intent(getApplicationContext(), ChatRoomActivity.class);

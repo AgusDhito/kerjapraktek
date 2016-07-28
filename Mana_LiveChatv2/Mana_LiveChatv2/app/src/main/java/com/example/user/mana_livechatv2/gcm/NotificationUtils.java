@@ -17,6 +17,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 
 import java.io.IOException;
@@ -53,13 +54,18 @@ public class NotificationUtils {
 
     public void showNotificationMessage(final String title, final String message, final String timeStamp, Intent intent, String imageUrl) {
         // Check for empty push message
+//        Log.d("debug_notification", "shownotifmessage()");
+//        Log.d("debug_notification", message);
+
         if (TextUtils.isEmpty(message))
             return;
 
 
         // notification icon
         final int icon = R.mipmap.ic_launcher;
-
+        String[] names = message.split(" : ");
+//        Log.d("debug", intent.getAction());
+        intent.putExtra("name", names[0]);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         final PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(

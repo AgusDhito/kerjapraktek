@@ -8,8 +8,8 @@ import java.io.Serializable;
 public class ChatRoom implements Serializable {
     String id, name, lastMessage, timestamp;
     int unreadCount;
-
     public ChatRoom() {
+
     }
 
     public ChatRoom(String id, String name, String lastMessage, String timestamp, int unreadCount) {

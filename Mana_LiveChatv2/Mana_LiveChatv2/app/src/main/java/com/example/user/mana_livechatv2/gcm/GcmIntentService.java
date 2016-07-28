@@ -10,12 +10,16 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.user.mana_livechatv2.app.MyApplication;
+import com.example.user.mana_livechatv2.model.Message;
 import com.example.user.mana_livechatv2.model.User;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -49,8 +53,12 @@ public class GcmIntentService extends IntentService {
 
     public static final String KEY = "key";
     public static final String TOPIC = "topic";
+//    public static final String TOKEN = "token";
     public static final String SUBSCRIBE = "subscribe";
     public static final String UNSUBSCRIBE = "unsubscribe";
+    public static final String SUBSCRIBE_USER_ADDED_TOPIC = "subscribe_user_added_topic";
+    public static final String NARASUMBER = "narasumber";
+//    public static final String SUBSCRIBE_NARASUMBER = "subscribe_narasumber";
 
 
     @Override
@@ -60,13 +68,24 @@ public class GcmIntentService extends IntentService {
             case SUBSCRIBE:
                 // subscribe to a topic
                 String topic = intent.getStringExtra(TOPIC);
-                Log.d("debug_topic", topic);
+                //Log.d("debug_topic", topic);
                 subscribeToTopic(topic);
                 break;
             case UNSUBSCRIBE:
                 String topic1 = intent.getStringExtra(TOPIC);
                 unsubscribeFromTopic(topic1);
                 break;
+            case SUBSCRIBE_USER_ADDED_TOPIC:
+                String topic2 = intent.getStringExtra(TOPIC);
+                String narasumber = intent.getStringExtra(NARASUMBER);
+                Log.d("debug_token_service", narasumber);
+                subscribeToTopic(topic2);
+                subscribeToTopic_OtherDevice(topic2, narasumber);
+//            case SUBSCRIBE_NARASUMBER :
+//                String topic3= intent.getStringExtra(TOPIC);
+//                String tokenjing = intent.getStringExtra(TOKEN);
+//                //Log.d("token", token);
+//                jancuk(topic3, tokenjing);
             default:
                 // if key is not specified, register with GCM
                 registerGCM();
@@ -80,7 +99,7 @@ public class GcmIntentService extends IntentService {
     private void registerGCM() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String token = null;
-        Log.d("debug_update_gcm", "UPDATE GCM");
+        //Log.d("debug_update_gcm", "UPDATE GCM");
         try {
             InstanceID instanceID = InstanceID.getInstance(this);
             token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
@@ -131,6 +150,7 @@ public class GcmIntentService extends IntentService {
                         // broadcasting token sent to server
                         Intent registrationComplete = new Intent(Config.SENT_TOKEN_TO_SERVER);
                         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(registrationComplete);
+
                     } else {
                         Toast.makeText(getApplicationContext(), "Unable to send gcm registration id to our sever. " + obj.getJSONObject("error").getString("message"), Toast.LENGTH_LONG).show();
                     }
@@ -174,6 +194,7 @@ public class GcmIntentService extends IntentService {
         try {
             token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            //Log.d("debug_subscribe", token);
             if (token != null) {
                 pubSub.subscribe(token, "/topics/" + topic, null);
                 Log.e(TAG, "Subscribed to topic: " + topic);
@@ -185,6 +206,26 @@ public class GcmIntentService extends IntentService {
             Toast.makeText(getApplicationContext(), "Topic subscribe error. Topic: " + topic + ", error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void subscribeToTopic_OtherDevice(final String topic, String token) {
+        String tokenjing = token;
+        try {
+            GcmPubSub pubSub = GcmPubSub.getInstance(getApplicationContext());
+            //InstanceID instanceID = InstanceID.getInstance(getApplicationContext());
+
+            Log.d("debug_subs_narasumber", tokenjing);
+            if (tokenjing != null) {
+                pubSub.subscribe(tokenjing, "/topics/" + topic, null);
+                Log.e(TAG, "Narasumber has subscribed to topic: " + topic);
+            } else {
+                Log.e(TAG, "error: narasumber gcm registration id is null");
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "narasumber Topic subscribe error. Topic: " + topic + ", error: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Topic subscribe error. Topic: " + topic + ", error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     public void unsubscribeFromTopic(String topic) {
         GcmPubSub pubSub = GcmPubSub.getInstance(getApplicationContext());

@@ -39,6 +39,7 @@ import com.example.user.mana_livechatv2.adapter.ChatRoomThreadAdapter;
 import com.example.user.mana_livechatv2.app.Config;
 import com.example.user.mana_livechatv2.app.EndPoints;
 import com.example.user.mana_livechatv2.app.MyApplication;
+import com.example.user.mana_livechatv2.gcm.GcmIntentService;
 import com.example.user.mana_livechatv2.gcm.NotificationUtils;
 import com.example.user.mana_livechatv2.model.Message;
 import com.example.user.mana_livechatv2.model.User;
@@ -67,7 +68,8 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         chatRoomId = intent.getStringExtra("chat_room_id");
-        String title = intent.getStringExtra("name");
+        Log.d("de", intent.getStringExtra("name"));
+        String title = set(intent.getStringExtra("name"));
 
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -111,6 +113,20 @@ public class ChatRoomActivity extends AppCompatActivity {
         fetchChatThread();
     }
 
+    //membuat nama chat room
+    private String set (String str) {
+        User user = MyApplication.getInstance().getPrefManager().getUser();
+        String[] names = str.split("/");
+//        Log.d("debug_name", names[0]);
+//        Log.d("debug_name", names[1]);
+
+        if (names[0].equals(user.getName())) {
+            return names[1];
+        }
+        else {
+            return names[0];
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -133,6 +149,7 @@ public class ChatRoomActivity extends AppCompatActivity {
      * recycler view and scroll it to bottom
      * */
     private void handlePushNotification(Intent intent) {
+        Log.d("debug_push", "handlePushNotification();->Chat Room Activity");
         Message message = (Message) intent.getSerializableExtra("message");
         String chatRoomId = intent.getStringExtra("chat_room_id");
 
@@ -181,21 +198,22 @@ public class ChatRoomActivity extends AppCompatActivity {
                         String commentId = commentObj.getString("message_id");
                         String commentText = commentObj.getString("message");
                         String createdAt = commentObj.getString("created_at");
-
                         JSONObject userObj = obj.getJSONObject("user");
                         String userId = userObj.getString("user_id");
                         String userName = userObj.getString("name");
                         User user = new User(userId, userName, null);
 
-                        Message message = new Message();
-                        message.setId(commentId);
-                        message.setMessage(commentText);
-                        message.setCreatedAt(createdAt);
-                        message.setUser(user);
+                        //if (visibility == true) {
+                            Message message = new Message();
+                            message.setId(commentId);
+                            message.setMessage(commentText);
+                            message.setCreatedAt(createdAt);
+                            message.setUser(user);
 
-                        messageArrayList.add(message);
+                            messageArrayList.add(message);
+                            mAdapter.notifyDataSetChanged();
+                        //}
 
-                        mAdapter.notifyDataSetChanged();
                         if (mAdapter.getItemCount() > 1) {
                             // scrolling to bottom of the recycler view
                             recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, mAdapter.getItemCount() - 1);
@@ -276,19 +294,23 @@ public class ChatRoomActivity extends AppCompatActivity {
                             String commentId = commentObj.getString("message_id");
                             String commentText = commentObj.getString("message");
                             String createdAt = commentObj.getString("created_at");
+                            String visibility = commentObj.getString("visibility");
+                            //Log.d("debug_visibility", String.valueOf(visibility));
 
                             JSONObject userObj = commentObj.getJSONObject("user");
                             String userId = userObj.getString("user_id");
                             String userName = userObj.getString("username");
                             User user = new User(userId, userName, null);
 
-                            Message message = new Message();
-                            message.setId(commentId);
-                            message.setMessage(commentText);
-                            message.setCreatedAt(createdAt);
-                            message.setUser(user);
+                            if (visibility.equals("t")) {
+                                Message message = new Message();
+                                message.setId(commentId);
+                                message.setMessage(commentText);
+                                message.setCreatedAt(createdAt);
+                                message.setUser(user);
 
-                            messageArrayList.add(message);
+                                messageArrayList.add(message);
+                            }
                         }
 
                         mAdapter.notifyDataSetChanged();

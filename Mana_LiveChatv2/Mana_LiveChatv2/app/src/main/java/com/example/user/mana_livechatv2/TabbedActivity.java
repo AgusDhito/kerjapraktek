@@ -31,14 +31,12 @@ public class TabbedActivity extends TabActivity {
         photospec.setIndicator("Chats", getResources().getDrawable(R.drawable.bg_bubble_white));
         Intent chatIntent = new Intent(this, MainActivity.class);
         photospec.setContent(chatIntent);
-        tabHost.addTab(photospec); // Adding photos tab
 
         // Tab for Songs
         TabHost.TabSpec songspec = tabHost.newTabSpec("Search");
         songspec.setIndicator("Search", getResources().getDrawable(R.drawable.bg_bubble_gray));
         Intent mapIntent = new Intent(this, Pencarian_Narasumber.class);
         songspec.setContent(mapIntent);
-        tabHost.addTab(songspec); // Adding songs tab
 
         // Tab for Videos
 //        TabHost.TabSpec videospec = tabHost.newTabSpec("Videos");
@@ -46,9 +44,12 @@ public class TabbedActivity extends TabActivity {
 //        Intent videosIntent = new Intent(this, VideosActivity.class);
 //        videospec.setContent(videosIntent);
 
-    }
+        // Adding all TabSpec to TabHost
+        tabHost.addTab(photospec); // Adding photos tab
+        tabHost.addTab(songspec); // Adding songs tab
+        //tabHost.addTab(videospec); // Adding videos tab
 
-//    @Override
+//        @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        // Inflate the menu; this adds items to the action bar if it is present.
 //        MenuInflater inflater = getMenuInflater();
@@ -65,4 +66,5 @@ public class TabbedActivity extends TabActivity {
 //        return super.onOptionsItemSelected(menuItem);
 //    }
 
+    }
 }
