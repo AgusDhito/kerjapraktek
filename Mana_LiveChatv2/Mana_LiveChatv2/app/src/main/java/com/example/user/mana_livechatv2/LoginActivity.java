@@ -74,8 +74,8 @@ public class LoginActivity extends AppCompatActivity {
 //        inputLayoutEmail = (TextInputLayout) findViewById(R.id.input_layout_email);
 //        inputLayoutPassword = (TextInputLayout) findViewById(R.id.input_layout_password);
         inputName = (EditText) findViewById(R.id.input_name);
-        inputEmail = (EditText) findViewById(R.id.input_email);
-//        inputPassword = (EditText) findViewById(R.id.input_password);
+//        inputEmail = (EditText) findViewById(R.id.input_email);
+        inputPassword = (EditText) findViewById(R.id.input_password);
 
         saveLoginCheckBox = (CheckBox)findViewById(R.id.saveLoginCheckBox);
         loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         saveLogin = loginPreferences.getBoolean("saveLogin", false);
         if (saveLogin == true) {
             inputName.setText(loginPreferences.getString("name", ""));
-            inputEmail.setText(loginPreferences.getString("email", ""));
+            inputPassword.setText(loginPreferences.getString("password", ""));
             saveLoginCheckBox.setChecked(true);
         }
 
@@ -123,12 +123,12 @@ public class LoginActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(inputName.getWindowToken(), 0);
 
         final String name = inputName.getText().toString().trim();
-        final String email = inputEmail.getText().toString().trim();
+        final String password = inputPassword.getText().toString().trim();
 
         if (saveLoginCheckBox.isChecked()) {
             loginPrefsEditor.putBoolean("saveLogin", true);
             loginPrefsEditor.putString("name", name);
-            loginPrefsEditor.putString("email", email);
+            loginPrefsEditor.putString("password", password);
             loginPrefsEditor.commit();
         } else {
             loginPrefsEditor.clear();
@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         // Check for empty data in the form
-        if (!name.isEmpty() && !email.isEmpty()) {
+        if (!name.isEmpty() && !password.isEmpty()) {
             // login user
             StringRequest strReq = new StringRequest(Request.Method.POST,
                     EndPoints.LOGIN, new Response.Listener<String>() {
@@ -155,7 +155,8 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject userObj = obj.getJSONObject("user");
                             User user = new User(userObj.getString("user_id"),
                                     userObj.getString("name"),
-                                    userObj.getString("email"));
+                                    userObj.getString("email"),
+                                    userObj.getString("fullname"));
 
                             // storing user in shared preferences
                             MyApplication.getInstance().getPrefManager().storeUser(user);
@@ -194,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
                     params.put("name", name);
-                    params.put("email", email);
+                    params.put("password", password);
 
                     Log.e(TAG, "params: " + params.toString());
                     return params;

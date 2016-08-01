@@ -37,6 +37,7 @@ public class MyPreferenceManager {
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER_NAME = "user_name";
     private static final String KEY_USER_EMAIL = "user_email";
+    private static final String KEY_USER_FULLNAME = "user_fullname";
     private static final String KEY_NOTIFICATIONS = "notifications";
     private static final String KEY_CHAT_ROOMS = "chat_rooms";
 
@@ -131,6 +132,7 @@ public class MyPreferenceManager {
         editor.putString(KEY_USER_ID, user.getId());
         editor.putString(KEY_USER_NAME, user.getName());
         editor.putString(KEY_USER_EMAIL, user.getEmail());
+        editor.putString(KEY_USER_FULLNAME, user.getFullname());
 //        editor.putStringSet(KEY_CHAT_ROOMS, set);
         editor.commit();
 
@@ -156,12 +158,13 @@ public class MyPreferenceManager {
     }
     public User getUser() {
         if (pref.getString(KEY_USER_ID, null) != null) {
-            String id, name, email;
+            String id, name, email, fullname;
             id = pref.getString(KEY_USER_ID, null);
             name = pref.getString(KEY_USER_NAME, null);
             email = pref.getString(KEY_USER_EMAIL, null);
+            fullname = pref.getString(KEY_USER_FULLNAME, null);
 
-            User user = new User(id, name, email);
+            User user = new User(id, name, email, fullname);
             return user;
         }
         return null;

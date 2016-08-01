@@ -31,7 +31,7 @@
             android:id="@+id/input_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_name"
+            android:hint="Username"
             android:padding="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
@@ -40,10 +40,11 @@
 
 
         <EditText
-            android:id="@+id/input_email"
+            android:id="@+id/input_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_email"
+            android:inputType="textPassword"
+            android:hint="Kata sandi"
             android:padding="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
