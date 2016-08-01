@@ -201,7 +201,7 @@ public class ChatRoomActivity extends AppCompatActivity {
                         JSONObject userObj = obj.getJSONObject("user");
                         String userId = userObj.getString("user_id");
                         String userName = userObj.getString("name");
-                        User user = new User(userId, userName, null);
+                        User user = new User(userId, userName, null, null);
 
                         //if (visibility == true) {
                             Message message = new Message();
@@ -300,7 +300,7 @@ public class ChatRoomActivity extends AppCompatActivity {
                             JSONObject userObj = commentObj.getJSONObject("user");
                             String userId = userObj.getString("user_id");
                             String userName = userObj.getString("username");
-                            User user = new User(userId, userName, null);
+                            User user = new User(userId, userName, null, null);
 
                             if (visibility.equals("t")) {
                                 Message message = new Message();
